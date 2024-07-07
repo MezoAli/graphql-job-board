@@ -1,6 +1,7 @@
+import { getJobs } from "../db/jobs.js";
+
 export const resolvers = {
   Query: {
-    greeting: () => "hello world",
-    age: () => 34,
+    jobs: () => getJobs(),
   },
 };
