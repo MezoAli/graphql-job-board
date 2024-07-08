@@ -39,6 +39,21 @@ export const getJobById = async (id) => {
   `;
 
   const data = await client.request(query, { id });
-  console.log(data);
   return data?.job;
+};
+
+export const getCompanyById = async (id) => {
+  const query = gql`
+    query ($id: ID!) {
+      company(id: $id) {
+        description
+        id
+        name
+      }
+    }
+  `;
+
+  const data = await client.request(query, { id });
+  console.log(data);
+  return data?.company;
 };
