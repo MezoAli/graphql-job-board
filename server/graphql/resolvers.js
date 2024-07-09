@@ -1,5 +1,5 @@
 import { getCompany } from "../db/companies.js";
-import { getJob, getJobs } from "../db/jobs.js";
+import { getCompanyJobs, getJob, getJobs } from "../db/jobs.js";
 
 export const resolvers = {
   Query: {
@@ -12,5 +12,8 @@ export const resolvers = {
       return new Date(job.createdAt).toLocaleDateString();
     },
     company: (job) => getCompany(job.companyId),
+  },
+  Company: {
+    jobs: (company) => getCompanyJobs(company.id),
   },
 };
