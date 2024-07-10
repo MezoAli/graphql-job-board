@@ -22,7 +22,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: async (_, { title, description }) => {
+    createJob: async (_, { input: { title, description } }) => {
       const companyId = "FjcJCHJALA4i";
       const job = await createJob({ companyId, description, title });
       return job;

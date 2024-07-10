@@ -44,7 +44,7 @@ export const getJobById = async (id) => {
 
 export const getCompanyById = async (id) => {
   const query = gql`
-    query ($id: ID!) {
+    query companyById($id: ID!) {
       company(id: $id) {
         description
         id
