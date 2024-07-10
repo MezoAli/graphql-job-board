@@ -5,6 +5,7 @@ import {
   getCompanyJobs,
   getJob,
   getJobs,
+  updateJob,
 } from "../db/jobs.js";
 import { GraphQLError } from "graphql";
 
@@ -35,6 +36,13 @@ export const resolvers = {
     },
     deleteJob: async (_, { id }) => {
       const job = await deleteJob(id);
+      if (!job) {
+        throw customError(`no job found with that id : ${id}`);
+      }
+      return job;
+    },
+    updateJob: async (_, { input: { title, description, id } }) => {
+      const job = await updateJob({ title, description, id });
       if (!job) {
         throw customError(`no job found with that id : ${id}`);
       }
