@@ -29,9 +29,15 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: async (_, { input: { title, description } }) => {
-      const companyId = "FjcJCHJALA4i";
-      const job = await createJob({ companyId, description, title });
+    createJob: async (_, { input: { title, description } }, context) => {
+      if (!context.user) {
+        throw unauthorizedError("you are un-authorized");
+      }
+      const job = await createJob({
+        companyId: context.user.companyId,
+        description,
+        title,
+      });
       return job;
     },
     deleteJob: async (_, { id }) => {
@@ -62,4 +68,8 @@ export const resolvers = {
 
 const customError = (message) => {
   return new GraphQLError(message, { extensions: { code: "NOT_FOUND" } });
+};
+
+const unauthorizedError = (message) => {
+  return new GraphQLError(message, { extensions: { code: "UNAUTHORIZED" } });
 };
