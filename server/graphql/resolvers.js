@@ -1,5 +1,11 @@
 import { getCompany } from "../db/companies.js";
-import { createJob, getCompanyJobs, getJob, getJobs } from "../db/jobs.js";
+import {
+  createJob,
+  deleteJob,
+  getCompanyJobs,
+  getJob,
+  getJobs,
+} from "../db/jobs.js";
 import { GraphQLError } from "graphql";
 
 export const resolvers = {
@@ -25,6 +31,13 @@ export const resolvers = {
     createJob: async (_, { input: { title, description } }) => {
       const companyId = "FjcJCHJALA4i";
       const job = await createJob({ companyId, description, title });
+      return job;
+    },
+    deleteJob: async (_, { id }) => {
+      const job = await deleteJob(id);
+      if (!job) {
+        throw customError(`no job found with that id : ${id}`);
+      }
       return job;
     },
   },
