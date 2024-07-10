@@ -1,5 +1,5 @@
 import { getCompany } from "../db/companies.js";
-import { getCompanyJobs, getJob, getJobs } from "../db/jobs.js";
+import { createJob, getCompanyJobs, getJob, getJobs } from "../db/jobs.js";
 import { GraphQLError } from "graphql";
 
 export const resolvers = {
@@ -18,6 +18,14 @@ export const resolvers = {
         throw customError(`can't find company with id : ${args.id}`);
       }
       return company;
+    },
+  },
+
+  Mutation: {
+    createJob: async (_, { title, description }) => {
+      const companyId = "FjcJCHJALA4i";
+      const job = await createJob({ companyId, description, title });
+      return job;
     },
   },
   Job: {
