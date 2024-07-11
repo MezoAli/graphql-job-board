@@ -40,15 +40,26 @@ export const resolvers = {
       });
       return job;
     },
-    deleteJob: async (_, { id }) => {
-      const job = await deleteJob(id);
+    deleteJob: async (_, { id }, { user }) => {
+      if (!user) {
+        throw unauthorizedError("you are un-authorized");
+      }
+      const job = await deleteJob(id, user?.companyId);
       if (!job) {
         throw customError(`no job found with that id : ${id}`);
       }
       return job;
     },
-    updateJob: async (_, { input: { title, description, id } }) => {
-      const job = await updateJob({ title, description, id });
+    updateJob: async (_, { input: { title, description, id } }, { user }) => {
+      if (!user) {
+        throw unauthorizedError("you are un-authorized");
+      }
+      const job = await updateJob({
+        title,
+        description,
+        id,
+        companyId: user?.companyId,
+      });
       if (!job) {
         throw customError(`no job found with that id : ${id}`);
       }
