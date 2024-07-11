@@ -1,26 +1,33 @@
-import { GraphQLClient } from "graphql-request";
 import { getAccessToken } from "./auth";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  gql,
+  concat,
+  ApolloLink,
+  createHttpLink,
+} from "@apollo/client";
 
-const client = new GraphQLClient("http://localhost:9000/graphql", {
-  headers: () => {
-    const accessToken = getAccessToken();
-    if (accessToken) {
-      return { Authorization: `Bearer ${accessToken}` };
-    } else {
-      return {};
-    }
-  },
+const httpLink = createHttpLink({ uri: "http://localhost:9000/graphql" });
+
+const authLink = new ApolloLink((operation, forward) => {
+  const accessToken = getAccessToken();
+  if (accessToken) {
+    operation.setContext({
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  }
+  return forward(operation);
 });
 
 const apolloClient = new ApolloClient({
-  uri: "http://localhost:9000/graphql",
+  link: concat(authLink, httpLink),
   cache: new InMemoryCache(),
 });
 
 export const getAllJobs = async () => {
   const query = gql`
-    query {
+    query jobs {
       jobs {
         id
         title
@@ -87,8 +94,15 @@ export const createJob = async ({ title, description }) => {
     }
   `;
 
-  const data = await client.request(mutation, {
-    input: { title, description },
+  const result = await apolloClient.mutate({
+    mutation,
+    variables: {
+      input: {
+        title,
+        description,
+      },
+    },
   });
-  return data?.job;
+
+  return result.data.job;
 };
