@@ -20,7 +20,7 @@ const authLink = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   link: concat(authLink, httpLink),
   cache: new InMemoryCache(),
 });
@@ -78,25 +78,21 @@ export const getJobById = async (id) => {
   return result.data.job;
 };
 
-export const getCompanyById = async (id) => {
-  const query = gql`
-    query companyById($id: ID!) {
-      company(id: $id) {
-        description
+export const companyByIdQuery = gql`
+  query companyById($id: ID!) {
+    company(id: $id) {
+      description
+      id
+      name
+      jobs {
         id
-        name
-        jobs {
-          id
-          title
-          description
-          date
-        }
+        title
+        description
+        date
       }
     }
-  `;
-  const result = await apolloClient.query({ query, variables: { id } });
-  return result.data.company;
-};
+  }
+`;
 
 export const createJob = async ({ title, description }) => {
   const mutation = gql`
