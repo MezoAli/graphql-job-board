@@ -40,28 +40,41 @@ export const getAllJobs = async () => {
     }
   `;
 
-  const result = await apolloClient.query({ query });
+  const result = await apolloClient.query({
+    query,
+    fetchPolicy: "network-only",
+  });
   return result.data.jobs;
 };
 
-export const getJobById = async (id) => {
-  const query = gql`
-    query jobById($id: ID!) {
-      job(id: $id) {
-        title
-        id
-        description
-        date
-        company {
-          description
-          id
-          name
-        }
-      }
+const jobDetailsFragment = gql`
+  fragment JobDetails on Job {
+    title
+    id
+    description
+    date
+    company {
+      description
+      id
+      name
     }
-  `;
+  }
+`;
 
-  const result = await apolloClient.query({ query, variables: { id } });
+const jobByIdQuery = gql`
+  query jobById($id: ID!) {
+    job(id: $id) {
+      ...JobDetails
+    }
+  }
+  ${jobDetailsFragment}
+`;
+
+export const getJobById = async (id) => {
+  const result = await apolloClient.query({
+    query: jobByIdQuery,
+    variables: { id },
+  });
   return result.data.job;
 };
 
@@ -89,9 +102,10 @@ export const createJob = async ({ title, description }) => {
   const mutation = gql`
     mutation ($input: CreateJobType!) {
       job: createJob(input: $input) {
-        id
+        ...JobDetails
       }
     }
+    ${jobDetailsFragment}
   `;
 
   const result = await apolloClient.mutate({
@@ -101,6 +115,13 @@ export const createJob = async ({ title, description }) => {
         title,
         description,
       },
+    },
+    update: (cache, result) => {
+      cache.writeQuery({
+        query: jobByIdQuery,
+        variables: { id: result.data.job.id },
+        data: result.data,
+      });
     },
   });
 
