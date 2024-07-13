@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
 import JobList from "../components/JobList";
-import { getAllJobs } from "../lib/graphql";
+import { useJobs } from "../lib/hooks";
 
 function HomePage() {
-  const [jobs, setJobs] = useState([]);
-  useEffect(() => {
-    const setAllJobs = async () => {
-      const allJobs = await getAllJobs();
-      setJobs(allJobs);
-    };
-    setAllJobs();
-  }, []);
+  const { jobs, error, loading } = useJobs();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Something Went Wrong</div>;
+  }
+
   return (
     <div>
       <h1 className="title">Job Board</h1>
