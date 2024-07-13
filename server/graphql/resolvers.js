@@ -70,7 +70,8 @@ export const resolvers = {
     date: (job) => {
       return new Date(job.createdAt).toLocaleDateString();
     },
-    company: (job) => getCompany(job.companyId),
+    company: (job, _args, { companyLoader }) =>
+      companyLoader.load(job.companyId),
   },
   Company: {
     jobs: (company) => getCompanyJobs(company.id),
