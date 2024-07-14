@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import JobList from "../components/JobList";
 import { useJobs } from "../lib/hooks";
 
-const JOBS_PER_PAGE = 5;
+const JOBS_PER_PAGE = 10;
 
 function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const { jobs, error, loading } = useJobs(
+  const { jobs, totalCount, error, loading } = useJobs(
     JOBS_PER_PAGE,
     (currentPage - 1) * JOBS_PER_PAGE
   );
+  const totalPages = Math.ceil(totalCount / JOBS_PER_PAGE);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -38,7 +39,7 @@ function HomePage() {
             padding: "5px 10px",
             borderRadius: "5px",
             fontWeight: "bolder",
-            cursor: "pointer",
+            cursor: `${currentPage === 1 ? "" : "pointer"}`,
           }}
         >
           Previous
@@ -48,11 +49,12 @@ function HomePage() {
         </span>
         <button
           onClick={() => setCurrentPage((prev) => prev + 1)}
+          disabled={currentPage === totalPages}
           style={{
             padding: "5px 10px",
             borderRadius: "5px",
             fontWeight: "bolder",
-            cursor: "pointer",
+            cursor: `${currentPage === totalPages ? "" : "pointer"}`,
           }}
         >
           Next

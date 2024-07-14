@@ -25,7 +25,12 @@ export const useJobs = (limit, offset) => {
     fetchPolicy: "network-only",
     variables: { limit, offset },
   });
-  return { jobs: data?.jobs, loading, error: Boolean(error) };
+  return {
+    jobs: data?.jobs.jobs,
+    totalCount: data?.jobs.totalCount,
+    loading,
+    error: Boolean(error),
+  };
 };
 
 export const useCreateJob = () => {
