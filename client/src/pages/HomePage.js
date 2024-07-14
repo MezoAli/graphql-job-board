@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import JobList from "../components/JobList";
 import { useJobs } from "../lib/hooks";
+import PaginationBar from "../components/PaginationBar";
 
 const JOBS_PER_PAGE = 10;
 
@@ -23,43 +24,12 @@ function HomePage() {
   return (
     <div>
       <h1 className="title">Job Board</h1>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "50%",
-          margin: "20px auto",
-        }}
-      >
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-          style={{
-            padding: "5px 10px",
-            borderRadius: "5px",
-            fontWeight: "bolder",
-            cursor: `${currentPage === 1 ? "" : "pointer"}`,
-          }}
-        >
-          Previous
-        </button>
-        <span style={{ fontWeight: "bold", fontSize: "30px" }}>
-          {currentPage}
-        </span>
-        <button
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          disabled={currentPage === totalPages}
-          style={{
-            padding: "5px 10px",
-            borderRadius: "5px",
-            fontWeight: "bolder",
-            cursor: `${currentPage === totalPages ? "" : "pointer"}`,
-          }}
-        >
-          Next
-        </button>
-      </div>
+      <PaginationBar
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+
       <JobList jobs={jobs} />
     </div>
   );
