@@ -11,7 +11,7 @@ import { GraphQLError } from "graphql";
 
 export const resolvers = {
   Query: {
-    jobs: () => getJobs(),
+    jobs: (_root, { limit }) => getJobs(limit),
     job: async (_, args) => {
       const job = await getJob(args.id);
       if (!job) {
