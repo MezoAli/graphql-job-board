@@ -26,8 +26,8 @@ export const apolloClient = new ApolloClient({
 });
 
 export const allJobsQuery = gql`
-  query jobs {
-    jobs {
+  query jobs($limit: Int, $offset: Int) {
+    jobs(limit: $limit, offset: $offset) {
       id
       title
       date
